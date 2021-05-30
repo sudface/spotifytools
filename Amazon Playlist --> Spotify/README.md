@@ -2,6 +2,8 @@
 run btfs.py, and give it the playlist ID (/playlist/**_ABCD1234EF_**/). <br>
 It'll search the songs through Spotify and add matching ones to a new Spotify Playlist.
 
+Note: btfs.py calls an import of spotifytools.py, and you may need to play with the imports a bit depending on your system.
+
 # What does what
 **btfs.py** performs:
 * A rip of the playlist provided from Amazon Music
