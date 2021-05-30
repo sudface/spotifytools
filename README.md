@@ -1,5 +1,5 @@
 # spotifytools
-An in-progress collection of homemade spotify tools for Python. 
+An in-progress collection of homemade spotify tools for Python. <br>
 Tested on Python 3.8.5 for Linux and 3.9.5 for Windows UWP
 
 
