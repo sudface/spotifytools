@@ -1,5 +1,6 @@
 # spotifytools
-An in-progress collection of homemade spotify tools
+An in-progress collection of homemade spotify tools for Python. 
+Tested on Python 3.8.5 for Linux and 3.9.5 for Windows UWP
 
 
 # spdc
