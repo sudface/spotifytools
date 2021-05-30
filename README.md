@@ -5,6 +5,7 @@ An in-progress collection of homemade spotify tools
 # spdc
 ## What
 Spdc is the authentication of you. This is a ~~low~~ no-budget project so can't afford OAuth verification or whatever.
+Feel free to pull-request and fix that.
 
 ## How
 You can get your spdc by logging into spotify online (open.spotify.com) and signing in.
