@@ -5,8 +5,7 @@ Tested on Python 3.8.5 for Linux and 3.9.5 for Windows UWP
 
 # spdc
 ## What
-Spdc is the authentication of you. This is a ~~low~~ no-budget project so can't afford OAuth verification or whatever.
-Feel free to pull-request and fix that.
+Spdc is your authentication token. This is quite a hacky project so I won't bother with OAuth. Feel free to pull-request and fix that.
 
 ## How
 You can get your spdc by logging into spotify online (open.spotify.com) and signing in.
