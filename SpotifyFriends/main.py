@@ -2,13 +2,10 @@ from flask import Flask, redirect, url_for, request, make_response
 import requests
 # from pprint import pprint
 from datetime import datetime, timezone
-from dateutil.relativedelta import relativedelta #pip install python-dateutil
+from dateutil.relativedelta import relativedelta
 
 '''
 TODO:
-  > Sorting people cards 
-    > based on last seen
-    > based on alphabetical?
   > Style cookie request page
   > Include instructions on cookie request page
 '''
@@ -17,9 +14,9 @@ app = Flask(__name__, static_url_path='/static')
 
 def can_int(val):
     try:
-        num = int(val)
+      num = int(val)
     except ValueError:
-        return False
+      return False
     return True
 
 def timeUntilUnixTime(epochms):
@@ -106,10 +103,14 @@ def lastSeen(when):
 @app.route('/')
 def home():
   spdc_cookie = request.cookies.get('spdc')
+  sort_cookie = request.cookies.get('sort')
   if spdc_cookie:
     spdc = spdc_cookie
   else:
     return redirect(url_for('getcookie'))
+  
+  if not sort_cookie:
+    sort_cookie = "seen"
 
   accessToken, expiry, success = getWebAccessToken(spdc)
 
@@ -147,7 +148,7 @@ def home():
     '''
     return failhtml
 
-  print(f'Access Token: {accessToken},', f'Expires in {expiry.minutes} minutes')
+  print(f'Access Token {accessToken[:4]}...{accessToken[-2:]} expires in {expiry.minutes} minutes')
   print()
   friendActivity = getFriendActivity(accessToken)
 
@@ -155,6 +156,7 @@ def home():
   html = """
   <html>
     <head>
+      <meta http-equiv="refresh" content="20" >
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <link rel="stylesheet" href="/static/w3.css">
       <style>
@@ -183,6 +185,14 @@ def home():
           width: 240px;
         }
 
+        .sortbox {
+          position: fixed; /* Fixed/sticky position */
+          top: 20px; /* Place the button at the top of the page */
+          right: 30px; /* Place the button 30px from the right */
+          z-index: 99; /* Make sure it does not overlap */
+          border-radius: 10px; /* Rounded corners */
+        }
+
         @media only screen and (max-width: 600px) {
           .w280, .w240 {
             width: 100%;
@@ -197,12 +207,24 @@ def home():
       </title>
     </head>
   <body>
-      <div class="w3-row-padding">
+      <div class="w3-dropdown-hover sortbox">
+        <button class="w3-button w3-black w3-round-large">Sort?</button>
+        <div class="w3-dropdown-content w3-bar-block w3-border" style="right:0">
+          <a href="#" class="w3-bar-item w3-button" onclick="setSort(1)">Last Seen (default)</a>
+          <a href="#" class="w3-bar-item w3-button" onclick="setSort(2)">Name</a>
+        </div>
+      </div>
+
+    <div id="cardholder" class="w3-row-padding" style="zoom: 1;">
 
   
   """
+  if sort_cookie == "seen":
+    sortedfriendactivity = list(reversed(friendActivity['friends']))
+  elif sort_cookie == "alpha":
+    sortedfriendactivity = sorted(friendActivity['friends'], key=lambda d: (d['user']['name']).lower())
 
-  for friend in friendActivity['friends']:
+  for friend in sortedfriendactivity:
     ago = lastSeen(timeUntilUnixTime(friend['timestamp']))
     
     user = friend['user']
@@ -282,17 +304,27 @@ def home():
         </div>
     </div>
     '''
-
-    print(username, ago)
+    print(f'{username[:3]}...{username[-1:]}', ago)
 
   html += """
   <script>
-    setTimeout(function () {
-    location.reload();
-    }, 15000);
+    function setCookie(cname, cvalue, exdays) {
+      var d = new Date();
+      d.setTime(d.getTime() + (exdays*24*60*60*1000));
+      var expires = "expires="+ d.toUTCString();
+      document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+
+    function setSort(how) {
+      if (how == 1) {
+        setCookie('sort', 'seen', 365)
+      } else if (how == 2) {
+        setCookie('sort', 'alpha', 365)
+      }
+      location.reload();
+    }
   </script>
   </body></html>
-  
   """
 
   res = make_response(html)
@@ -302,7 +334,7 @@ def home():
 
 @app.route('/getcookie', methods = ['GET'])
 def getcookie():
-
+  ##LOGIN PAGE
   html = '''
   <html>  
   <head>  
