@@ -1,12 +1,13 @@
+from re import X
 from flask import Flask, redirect, url_for, request, make_response
 import requests
 # from pprint import pprint
 from datetime import datetime, timezone
 from dateutil.relativedelta import relativedelta
+from webelements import main_head, login_foot, login_head
 
 '''
 TODO:
-  > Style cookie request page
   > Include instructions on cookie request page
 '''
 
@@ -115,110 +116,15 @@ def home():
   accessToken, expiry, success = getWebAccessToken(spdc)
 
   if not success:
-    failhtml = '''
-      <html>  
-      <head>  
-          <title>Incorrect Cookie</title>  
-          <script>
-            function setCookie(cname, cvalue, exdays) {
-              var d = new Date();
-              d.setTime(d.getTime() + (exdays*24*60*60*1000));
-              var expires = "expires="+ d.toUTCString();
-              document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-            }
-            
-            function setspdc() {
-              x = new FormData(document.querySelector('form'))
-              spdc = x.get('spdc')
-              setCookie("spdc", spdc, 365)
-              // document.cookie = "spdc=" + spdc + "; expires=";
-              alert('Recieved SPDC ' + spdc)
-              document.body.innerHTML = '<h1>Saved!</h1><a href="/"><h2>View your friend activity</h2></a>';
-            }
-          </script>
-      </head>  
-      <body>  
-        <h1>Your cookie seems to be incorrect, or I'm having a bad day. Try checking your cookie?</h1>
-        <form method="post" action="javascript:setspdc()">  
-            <input type="text" name="spdc" required placeholder="long string of text">
-            <input type="submit" value="Submit">
-        </form>  
-      </body>  
-      </html>  
-    '''
+    failhtml = login_head + "Your cookie seems to be incorrect, or I'm having a bad day. Try checking your cookie" + login_foot
     return failhtml
 
   print(f'Access Token {accessToken[:4]}...{accessToken[-2:]} expires in {expiry.minutes} minutes')
   print()
   friendActivity = getFriendActivity(accessToken)
 
-  # pprint(friendActivity)
-  html = """
-  <html>
-    <head>
-      <meta http-equiv="refresh" content="20" >
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <link rel="stylesheet" href="/static/w3.css">
-      <style>
-        .cs240 {
-          object-fit: contain; /* Do not scale the image */
-          object-position: center; /* Center the image within the element */
-          height: 240px;
-          width: 240px;
-        }
-        .mh180 {
-          overflow: overlay;
-          height: 180px;
-        }
-        .w280 {
-          width: 280px;
-        }
-        .wrapflow {
-          white-space: nowrap;
-          overflow-x: hidden;
-        }
-        .x3434 {
-          width:34px; 
-          height:34px;
-        }
-        .w240 {
-          width: 240px;
-        }
-
-        .sortbox {
-          position: fixed; /* Fixed/sticky position */
-          top: 20px; /* Place the button at the top of the page */
-          right: 30px; /* Place the button 30px from the right */
-          z-index: 99; /* Make sure it does not overlap */
-          border-radius: 10px; /* Rounded corners */
-        }
-
-        @media only screen and (max-width: 600px) {
-          .w280, .w240 {
-            width: 100%;
-          }
-          .cs240 {
-            width: 100%;
-          }
-        }
-      </style>
-      <title>
-        Friend Activity
-      </title>
-    </head>
-  <body>
-      <div class="w3-dropdown-hover sortbox">
-        <button class="w3-button w3-black w3-round-large">Sort?</button>
-        <div class="w3-dropdown-content w3-bar-block w3-border" style="right:0">
-          <a href="#" class="w3-bar-item w3-button" onclick="setSort(1)">Last Seen (default)</a>
-          <a href="#" class="w3-bar-item w3-button" onclick="setSort(2)">Name</a>
-        </div>
-      </div>
-
-    <div id="cardholder" class="w3-row-padding" style="zoom: 1;">
-
+  html = main_head
   
-  """
   if sort_cookie == "seen":
     sortedfriendactivity = list(reversed(friendActivity['friends']))
   elif sort_cookie == "alpha":
@@ -334,40 +240,9 @@ def home():
 
 @app.route('/getcookie', methods = ['GET'])
 def getcookie():
-  ##LOGIN PAGE
-  html = '''
-  <html>  
-  <head>  
-      <title>Input Cookie</title>  
-      <script>
-        function setCookie(cname, cvalue, exdays) {
-          var d = new Date();
-          d.setTime(d.getTime() + (exdays*24*60*60*1000));
-          var expires = "expires="+ d.toUTCString();
-          document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-        }
-
-        function setspdc() {
-          x = new FormData(document.querySelector('form'))
-          spdc = x.get('spdc')
-          setCookie("spdc", spdc, 365)
-          // document.cookie = "spdc=" + spdc + "; expires=";
-          alert('Recieved SPDC ' + spdc)
-          document.body.innerHTML = '<h1>Saved!</h1><a href="/"><h2>View your friend activity</h2></a>';
-        }
-      </script>
-  </head>  
-  <body>  
-      <form method="post" action="javascript:setspdc()">  
-          <input type="text" name="spdc" required placeholder="long string of text">
-          <input type="submit" value="Submit">
-      </form>  
-  </body>  
-  </html>  
-  
-  '''
+  ## LOGIN PAGE
+  html = login_head + "Enter your sp_dc cookie" + login_foot
   res = make_response(html)
-
   return res
 
 app.run('0.0.0.0')
