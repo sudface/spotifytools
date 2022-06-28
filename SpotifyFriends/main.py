@@ -6,11 +6,6 @@ from datetime import datetime, timezone
 from dateutil.relativedelta import relativedelta
 from webelements import main_head, login_foot, login_head
 
-'''
-TODO:
-  > Include instructions on cookie request page
-'''
-
 app = Flask(__name__, static_url_path='/static')
 
 def can_int(val):

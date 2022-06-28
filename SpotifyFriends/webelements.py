@@ -110,7 +110,7 @@ login_foot = """
 					</div>
 					
 					<div class="text-center w-full p-t-23">
-						<a href="#" class="txt1">
+						<a href="static/spdc.pdf" class="txt1">
 							What's an SP_DC cookie?
 						</a>
 					</div>
