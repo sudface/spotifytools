@@ -1,13 +1,12 @@
 # spotifytools
-An in-progress collection of homemade spotify tools for Python. <br>
+A collection of homemade spotify tools for Python. <br>
 Tested on Python 3.8.5 for Linux and 3.9.5 for Windows UWP
 
+As of 2023, SpotifyFriends still works, but the amazon playlist extractor is temperamental.
 
 # spdc
 ## What
-Spdc is your authentication token. This is quite a hacky project so I won't bother with OAuth. Feel free to pull-request and fix that.
-
-## How
+Spdc is your authentication token. 
 You can get your spdc by logging into spotify online (open.spotify.com) and signing in.
 It'll be stored in the cookies for that page
 
